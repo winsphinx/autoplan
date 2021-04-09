@@ -34,6 +34,9 @@ jobs:
     - name: Build with PyInstaller
       run: |
         pyinstaller -F yw.py
+        pyinstaller -F pswd.py
+        copy dist/*.exe .
+        7z a yw.zip *.exe *.json files/
 
     - name: Create GitHub release
       uses: marvinpinto/action-automatic-releases@latest
@@ -41,5 +44,5 @@ jobs:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: latest
         prerelease: false
-        files: |
-          dist/yw.exe
+        files:
+          yw.zip

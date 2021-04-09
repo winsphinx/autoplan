@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -- coding: utf-8 --
 
+import base64
 import datetime
 import json
 import os
@@ -17,6 +18,14 @@ colorama.init()
 RED = colorama.Fore.RED
 GREEN = colorama.Fore.GREEN
 END = colorama.Style.RESET_ALL
+
+
+def dec(s):
+    return str(base64.b64decode(bytes(s, 'utf-8')), 'utf-8')
+
+
+def enc(s):
+    return str(base64.b64encode(bytes(s, 'utf-8')), 'utf-8')
 
 
 def get_file_list(file_dir):
@@ -85,7 +94,7 @@ def login():
 
     with open("password.json", 'r') as f:
         password = json.load(f)
-    pswd = password.get(name)
+    pswd = dec(password.get(name))
 
     code = browser.find_element_by_id("checkCode").get_attribute("innerHTML")
 

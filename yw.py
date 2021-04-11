@@ -38,8 +38,11 @@ def add_user(user, pswd):
 
 def del_user(user):
     data = read_data()
-    del data[user]
-    write_data(data)
+    try:
+        del data[user]
+        write_data(data)
+    except KeyError:
+        print("\n用户名不存在！")
 
 
 def read_data():
@@ -212,18 +215,16 @@ if __name__ == '__main__':
             main()
         else:
             for k, v in opts:
-                if k == "-a":
-                    if len(args) == 1:
-                        add_user(v, args[0])
-                    elif len(args) < 1:
-                        print("缺少密码")
-                    else:
-                        print("参数太多")
-                elif k == "-d":
+                if k == "-a" and len(args) == 1:
+                    add_user(v, args[0])
+                elif k == "-d" and len(args) == 0:
                     del_user(v)
-                elif k == "-h":
+                elif k == "-h" and len(args) == 0:
                     print(tip)
-                elif k == "-u":
+                elif k == "-u" and len(args) == 0:
                     main(v)
+                else:
+                    print("\n命令格式错误！")
+                    print(tip)
     except getopt.GetoptError:
         print(tip)

@@ -36,7 +36,7 @@ jobs:
         pyinstaller -F yw.py
         pyinstaller -F pswd.py
         copy dist/*.exe .
-        7z a yw.zip *.exe *.json files/
+        7z a yw.zip *.exe files/
 
     - name: Create GitHub release
       uses: marvinpinto/action-automatic-releases@latest

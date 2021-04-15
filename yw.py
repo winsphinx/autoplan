@@ -46,8 +46,12 @@ def del_user(user):
 
 
 def read_data():
-    with open("password.json", 'r') as f:
-        return json.load(f)
+    try:
+        with open("password.json", 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        open("password.json", "w")
+        return {}
 
 
 def write_data(data):
@@ -124,9 +128,13 @@ def login(username):
     n.clear()
     n.send_keys(name)
 
-    with open("password.json", 'r') as f:
-        password = json.load(f)
-    pswd = dec(password.get(name))
+    try:
+        with open("password.json", 'r') as f:
+            password = json.load(f)
+            pswd = dec(password.get(name, ""))
+    except FileNotFoundError:
+        print(f"\n\n{RED}没有这个用户名！！！{END}")
+        sys.exit(0)
 
     code = browser.find_element_by_id("checkCode").get_attribute("innerHTML")
 
@@ -142,7 +150,7 @@ def login(username):
 
 
 def get_tasklist(browser):
-    tasks = list()
+    tasks = []
     tds = browser.find_elements_by_tag_name("td")
     jobs = tds[0].text.split("\n")
     for i in range(4, len(jobs), 2):
@@ -152,7 +160,7 @@ def get_tasklist(browser):
     return tasks
 
 
-def do_tasklist(browser, tasks):
+def execute_tasks(browser, tasks):
     main_windows = browser.current_window_handle
     for i in range(len(tasks)):
         id = browser.find_element_by_id(i + 1)
@@ -193,7 +201,7 @@ def main(username=""):
             break
         else:
             last_list = tasks
-            do_tasklist(browser, tasks)
+            execute_tasks(browser, tasks)
             browser.find_element_by_id("imgNext").click()
             time.sleep(5)
 

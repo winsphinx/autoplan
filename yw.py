@@ -21,6 +21,8 @@ RED = colorama.Fore.RED
 GREEN = colorama.Fore.GREEN
 END = colorama.Style.RESET_ALL
 
+URL = "http://10.202.3.27/WebApp/emoss"
+
 
 def dec(s):
     return str(base64.b64decode(bytes(s, 'utf-8')), 'utf-8')
@@ -110,7 +112,7 @@ def change_date():
 
 def login(username):
     browser = webdriver.Ie()
-    browser.get("http://10.202.3.27/WebApp/emoss/index.jsp")
+    browser.get(URL + "/index.jsp")
 
     n = browser.find_element_by_id("tfAccount")
 
@@ -143,8 +145,8 @@ def login(username):
     browser.find_element_by_id("btLogin").click()
 
     time.sleep(5)
-    url = r"http://10.202.3.27/WebApp/emoss/files/taskperformcontrol/taskmanagesheetmode.jsp?taskType=0&flowIndex=0"
-    browser.get(url)
+    browser.get(URL +
+                "/files/taskperformcontrol/taskmanagesheetmode.jsp?taskType=0")
 
     return browser
 
@@ -170,7 +172,8 @@ def execute_tasks(browser, tasks):
         for w in windows:
             if w != main_windows:
                 browser.switch_to.window(w)
-                filename = os.path.join(os.getcwd(), "files", (tasks[i] + ".xls"))
+                filename = os.path.join(os.getcwd(), "files",
+                                        (tasks[i] + ".xls"))
                 try:
                     browser.find_element_by_id("FILE").send_keys(filename)
                     browser.find_element_by_id("save").click()

@@ -1,15 +1,22 @@
 #!/usr/bin/env python
 # -- coding: utf-8 --
+"""
+Usage:
+  yw -a <username> <password>
+  yw -d <username>
+  yw -u <username>
+  yw
+"""
 
 import base64
 import datetime
-import getopt
 import json
 import os
 import sys
 import time
 
 import colorama
+import docopt
 import xlrd
 import xlwt
 from selenium import webdriver
@@ -189,7 +196,7 @@ def execute_tasks(browser, tasks):
                     browser.switch_to.window(main_windows)
 
 
-def main(username=""):
+def do_jobs(username=""):
     print(f"{RED}修改文件日期。。。{END}")
     change_date()
     print(f"{GREEN}文件日期改好了。。。{END}")
@@ -212,30 +219,13 @@ def main(username=""):
 
 
 if __name__ == '__main__':
-    tip = """
-    参数:
-            yw -a username password -- 增加用户名和密码
-            yw -d username          -- 删除指定的用户名
-            yw -u username          -- 以指定用户名登录
-    """
+    args = docopt.docopt(__doc__)
 
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], "-h-a:-d:-u:")
-
-        if len(opts) == 0 and len(args) == 0:
-            main()
-        else:
-            for k, v in opts:
-                if k == "-a" and len(args) == 1:
-                    add_user(v, args[0])
-                elif k == "-d" and len(args) == 0:
-                    del_user(v)
-                elif k == "-h" and len(args) == 0:
-                    print(tip)
-                elif k == "-u" and len(args) == 0:
-                    main(v)
-                else:
-                    print("\n命令格式错误！")
-                    print(tip)
-    except getopt.GetoptError:
-        print(tip)
+    if args["-a"]:
+        add_user(args["<username>"], args["<password>"])
+    elif args["-d"]:
+        del_user(args["<username>"])
+    elif args["-u"]:
+        do_jobs(args["<username>"])
+    else:
+        do_jobs()

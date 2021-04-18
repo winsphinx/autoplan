@@ -65,7 +65,7 @@ def read_data():
 
 def write_data(data):
     with open("password.json", 'w') as f:
-        json.dump(data, f)
+        json.dump(data, f, indent=2)
 
 
 def get_file_list(file_dir):

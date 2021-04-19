@@ -51,7 +51,7 @@ def del_user(user):
         del data[user]
         write_data(data)
     except KeyError:
-        print("\n用户名不存在！")
+        print(f"\n{RED}用户名不存在！{END}")
 
 
 def read_data():
@@ -141,8 +141,11 @@ def login(username):
         with open("password.json", 'r') as f:
             password = json.load(f)
             pswd = dec(password.get(name, ""))
+            if pswd == "":
+                print(f"\n\n{RED}没有这个人！{END}")
+                sys.exit(0)
     except FileNotFoundError:
-        print(f"\n\n{RED}没有这个用户名！！！{END}")
+        print(f"\n\n{RED}请先添加用户！{END}")
         sys.exit(0)
 
     code = browser.find_element_by_id("checkCode").get_attribute("innerHTML")
@@ -215,7 +218,7 @@ def do_jobs(username=""):
             browser.find_element_by_id("imgNext").click()
             time.sleep(5)
 
-    print("\n\n完成！")
+    print(f"\n\n{GREEN}完成！{END}")
 
 
 if __name__ == '__main__':

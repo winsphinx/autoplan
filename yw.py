@@ -119,6 +119,7 @@ def change_date():
 
 def login(username):
     browser = webdriver.Ie()
+    browser.implicitly_wait(30)
     browser.get(URL + "/index.jsp")
 
     n = browser.find_element_by_id("tfAccount")

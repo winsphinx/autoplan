@@ -32,11 +32,11 @@ URL = "http://10.202.3.27/WebApp/emoss"
 
 
 def dec(s):
-    return str(base64.b64decode(bytes(s, 'utf-8')), 'utf-8')
+    return str(base64.b64decode(bytes(s, "utf-8")), "utf-8")
 
 
 def enc(s):
-    return str(base64.b64encode(bytes(s, 'utf-8')), 'utf-8')
+    return str(base64.b64encode(bytes(s, "utf-8")), "utf-8")
 
 
 def add_user(user, pswd):
@@ -56,7 +56,7 @@ def del_user(user):
 
 def read_data():
     try:
-        with open("password.json", 'r') as f:
+        with open("password.json", "r") as f:
             return json.load(f)
     except FileNotFoundError:
         open("password.json", "w")
@@ -64,7 +64,7 @@ def read_data():
 
 
 def write_data(data):
-    with open("password.json", 'w') as f:
+    with open("password.json", "w") as f:
         json.dump(data, f, indent=2)
 
 
@@ -72,7 +72,7 @@ def get_file_list(file_dir):
     filelist = []
     for parent, _, filenames in os.walk(file_dir):
         for filename in filenames:
-            if os.path.splitext(filename)[1] == '.xls':
+            if os.path.splitext(filename)[1] == ".xls":
                 filelist.append(os.path.join(parent, filename))
     return filelist
 
@@ -87,7 +87,7 @@ def edit_file(filename):
     new_sheet = new_book.get_sheet(0)
 
     style = xlwt.XFStyle()
-    style.num_format_str = 'YYYY-MM-DD'
+    style.num_format_str = "YYYY-MM-DD"
 
     font = xlwt.Font()
     font.colour_index = 2  # 2:红色
@@ -127,7 +127,7 @@ def login(username):
     if username:
         name = username
     else:
-        old_name = n.get_attribute('value')
+        old_name = n.get_attribute("value")
         name = input(f"\n名字（回车还用 {old_name} ，或输入新的）: ")
 
         if name == "":
@@ -139,7 +139,7 @@ def login(username):
     n.send_keys(name)
 
     try:
-        with open("password.json", 'r') as f:
+        with open("password.json", "r") as f:
             password = json.load(f)
             pswd = dec(password.get(name, ""))
             if pswd == "":
@@ -156,8 +156,7 @@ def login(username):
     browser.find_element_by_id("btLogin").click()
 
     time.sleep(5)
-    browser.get(URL +
-                "/files/taskperformcontrol/taskmanagesheetmode.jsp?taskType=0")
+    browser.get(URL + "/files/taskperformcontrol/taskmanagesheetmode.jsp?taskType=0")
 
     return browser
 
@@ -183,8 +182,7 @@ def execute_tasks(browser, tasks):
         for w in windows:
             if w != main_windows:
                 browser.switch_to.window(w)
-                filename = os.path.join(os.getcwd(), "files",
-                                        (tasks[i] + ".xls"))
+                filename = os.path.join(os.getcwd(), "files", (tasks[i] + ".xls"))
                 try:
                     browser.find_element_by_id("FILE").send_keys(filename)
                     browser.find_element_by_id("save").click()
@@ -209,7 +207,7 @@ def do_jobs(username=""):
 
     last_list = list()
 
-    while (True):
+    while True:
         tasks = get_tasklist(browser)
         if last_list == tasks:
             break
@@ -222,7 +220,7 @@ def do_jobs(username=""):
     print(f"\n\n{GREEN}完成！{END}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     args = docopt.docopt(__doc__)
 
     if args["-a"]:

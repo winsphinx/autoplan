@@ -13,7 +13,6 @@ import datetime
 import json
 import os
 import sys
-import time
 
 import colorama
 import docopt
@@ -21,6 +20,8 @@ import xlrd
 import xlwt
 from selenium import webdriver
 from selenium.webdriver import ActionChains
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.ui import WebDriverWait
 from xlutils.copy import copy
 
 colorama.init()
@@ -111,15 +112,20 @@ def edit_file(filename):
 
 
 def change_date():
+    print(f"\n{RED}修改文件日期。。。{END}")
+
     file_list = get_file_list(os.getcwd())
     for file in file_list:
         print(file)
         edit_file(file)
 
+    print(f"\n{GREEN}文件日期改好了！{END}")
+
 
 def login(username):
+    print(f"\n{RED}开始登录系统。。。{END}")
     browser = webdriver.Ie()
-    browser.implicitly_wait(30)
+    browser.maximize_window()
     browser.get(URL + "/index.jsp")
 
     n = browser.find_element_by_id("tfAccount")
@@ -155,7 +161,11 @@ def login(username):
     browser.find_element_by_id("inputCode").send_keys(code)
     browser.find_element_by_id("btLogin").click()
 
-    time.sleep(5)
+    print(f"\n{GREEN}已成功登录！{END}")
+
+    WebDriverWait(browser, 30).until(
+        lambda browser: browser.find_element_by_name("InfoPage")
+    )
     browser.get(URL + "/files/taskperformcontrol/taskmanagesheetmode.jsp?taskType=0")
 
     return browser
@@ -163,6 +173,9 @@ def login(username):
 
 def get_tasklist(browser):
     tasks = []
+    WebDriverWait(browser, 10).until(
+        lambda browser: browser.find_element_by_name("taskForm")
+    )
     tds = browser.find_elements_by_tag_name("td")
     jobs = tds[0].text.split("\n")
     for i in range(4, len(jobs), 2):
@@ -173,14 +186,16 @@ def get_tasklist(browser):
 
 
 def execute_tasks(browser, tasks):
-    main_windows = browser.current_window_handle
+    main_window = browser.window_handles
     for i in range(len(tasks)):
         id = browser.find_element_by_id(i + 1)
         ActionChains(browser).double_click(id).perform()
-        time.sleep(3)
+        WebDriverWait(browser, 10).until(
+            expected_conditions.new_window_is_opened(main_window)
+        )
         windows = browser.window_handles
         for w in windows:
-            if w != main_windows:
+            if w != main_window[0]:
                 browser.switch_to.window(w)
                 filename = os.path.join(os.getcwd(), "files", (tasks[i] + ".xls"))
                 try:
@@ -191,21 +206,23 @@ def execute_tasks(browser, tasks):
                     print(f"{RED}{e}{END}")
                 else:
                     print(f"{filename} -- {GREEN}已上传{END}")
-                    time.sleep(2)
-                    browser.switch_to.alert.accept()
+                    alert = WebDriverWait(browser, 10).until(
+                        expected_conditions.alert_is_present()
+                    )
+                    alert.accept()
                 finally:
                     browser.close()
-                    browser.switch_to.window(main_windows)
+                    browser.switch_to.window(main_window[0])
 
 
 def do_jobs(username=""):
-    print(f"{RED}修改文件日期。。。{END}")
     change_date()
-    print(f"{GREEN}文件日期改好了。。。{END}")
 
     browser = login(username)
 
     last_list = list()
+
+    print(f"\n{RED}开始上传文件。。。{END}")
 
     while True:
         tasks = get_tasklist(browser)
@@ -215,9 +232,8 @@ def do_jobs(username=""):
             last_list = tasks
             execute_tasks(browser, tasks)
             browser.find_element_by_id("imgNext").click()
-            time.sleep(5)
 
-    print(f"\n\n{GREEN}完成！{END}")
+    print(f"\n{GREEN}文件上传完成！{END}")
 
 
 if __name__ == "__main__":

@@ -205,11 +205,11 @@ def execute_tasks(browser, tasks):
                     print(f"{filename} -- {RED}不成功{END}")
                     print(f"{RED}{e}{END}")
                 else:
-                    print(f"{filename} -- {GREEN}已上传{END}")
                     alert = WebDriverWait(browser, 10).until(
                         expected_conditions.alert_is_present()
                     )
                     alert.accept()
+                    print(f"{filename} -- {GREEN}已上传{END}")
                 finally:
                     browser.close()
                     browser.switch_to.window(main_window[0])
@@ -233,7 +233,7 @@ def do_jobs(username=""):
             execute_tasks(browser, tasks)
             browser.find_element_by_id("imgNext").click()
 
-    print(f"\n{GREEN}文件上传完成！{END}")
+    print(f"\n{GREEN}完成！{END}")
 
 
 if __name__ == "__main__":

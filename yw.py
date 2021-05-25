@@ -2,10 +2,19 @@
 # -- coding: utf-8 --
 """
 Usage:
-  yw -a <username> <password>
-  yw -d <username>
-  yw -u <username>
   yw
+  yw (-h | --help)
+  yw (-a | --add) <username> <password>
+  yw (-d | --del) <username>
+  yw (-u | --use) <username>
+
+Options:
+  无参数        根据提示手动执行
+  -h, --help    显示帮助
+  -a, --add     增加或修改用户名和密码
+  -d, --del     删除指定用户名
+  -u, --use     使用指定用户名执行
+
 """
 
 import base64
@@ -239,11 +248,11 @@ def do_jobs(username=""):
 if __name__ == "__main__":
     args = docopt.docopt(__doc__)
 
-    if args["-a"]:
+    if args["--add"]:
         add_user(args["<username>"], args["<password>"])
-    elif args["-d"]:
+    elif args["--del"]:
         del_user(args["<username>"])
-    elif args["-u"]:
+    elif args["--use"]:
         do_jobs(args["<username>"])
     else:
         do_jobs()

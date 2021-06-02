@@ -4,13 +4,15 @@
 Usage:
   yw
   yw (-h | --help)
+  yw (-l | --list)
   yw (-a | --add) <username> <password>
   yw (-d | --del) <username>
   yw (-u | --use) <username>
 
 Options:
-  无参数        根据提示手动执行
+  不带参数      根据提示手动执行
   -h, --help    显示帮助
+  -l, --list    显示全部用户列表
   -a, --add     增加或修改用户名和密码
   -d, --del     删除指定用户名
   -u, --use     使用指定用户名执行
@@ -61,7 +63,14 @@ def del_user(user):
         del data[user]
         write_data(data)
     except KeyError:
-        print(f"\n{RED}用户名不存在！{END}")
+        print(f"\n{RED}用户名 {user} 不存在！{END}")
+
+
+def list_user():
+    data = read_data()
+    print(f"{GREEN}列出全部用户名：{END}")
+    for k in data.keys():
+        print(f"  {k}")
 
 
 def read_data():
@@ -69,8 +78,9 @@ def read_data():
         with open("password.json", "r") as f:
             return json.load(f)
     except FileNotFoundError:
-        open("password.json", "w")
-        return {}
+        with open("password.json", "w+") as f:
+            f.write("{}")
+            return {}
 
 
 def write_data(data):
@@ -252,6 +262,8 @@ if __name__ == "__main__":
         add_user(args["<username>"], args["<password>"])
     elif args["--del"]:
         del_user(args["<username>"])
+    elif args["--list"]:
+        list_user()
     elif args["--use"]:
         do_jobs(args["<username>"])
     else:

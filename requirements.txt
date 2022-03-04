@@ -1,6 +1,6 @@
 colorama==0.4.4
 docopt==0.6.2
-selenium==3.141.0
+selenium==4.1.2
 urllib3==1.26.7
 xlrd==2.0.1
 xlutils==2.0.0
